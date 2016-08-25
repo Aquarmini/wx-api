@@ -37,7 +37,7 @@ class Utils
      */
     public static function setCache($filename, $content)
     {
-        if (!file_exists($filename)) {
+        if (!is_dir(dirname($filename))) {
             mkdir(dirname($filename), 0777, true);
         }
         file_put_contents($filename, serialize($content));
