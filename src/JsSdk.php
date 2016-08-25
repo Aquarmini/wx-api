@@ -1,7 +1,7 @@
 <?php
-namespace limx\tools;
+namespace limx\tools\wx;
 
-use limx\tools\Utils;
+use limx\tools\wx\Utils;
 
 class JsSdk
 {
