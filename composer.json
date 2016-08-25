@@ -1,0 +1,14 @@
+{
+    "name": "limingxinleo/wx-api",
+    "description": "用于微信JSSDK、微信红包、微信支付等继承SDK",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "limx\\tools\\": "src"
+        }
+    },
+    "require": {
+        "php": ">=5.3.0"
+    }
+}
