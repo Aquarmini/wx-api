@@ -88,13 +88,10 @@ class Utils
 
     public function httpPost($url, $data, $type = 'url', $header, $ssl = false)
     {
-
-
-
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        switch ($type) {
+        switch (strtolower($type)) {
             case 'url':
                 $postFields = http_build_query($data);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
