@@ -86,11 +86,35 @@ class Utils
         return $res;
     }
 
-    public function httpPost($url, $data, $type = 'url', $header, $ssl = false)
+    /**
+     * [httpPost desc]
+     * @desc
+     * @author limx
+     * @param $url
+     * @param $data
+     * @param string $type
+     * @param array $header
+     * @param bool $ssl
+     * @return mixed
+     */
+    public static function httpPost($url, $data, $type = 'url', $header = NULL, $ssl = false)
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        //要求结果为字符串且输出到屏幕上
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);//严格校验
+        //设置header
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+
+        if ($ssl) {
+            curl_setopt($ch, CURLOPT_SSLCERTTYPE, 'PEM');
+            curl_setopt($ch, CURLOPT_SSLCERT, $ssl['sslcert_path']);
+            curl_setopt($ch, CURLOPT_SSLKEYTYPE, 'PEM');
+            curl_setopt($ch, CURLOPT_SSLKEY, $ssl['sslkey_path']);
+        }
+
         switch (strtolower($type)) {
             case 'url':
                 $postFields = http_build_query($data);
@@ -104,7 +128,8 @@ class Utils
                         'Content-Length: ' . strlen($postFields))
                 );
                 break;
-            case 'xml':
+            case 'data':
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
                 break;
             default:
                 $postFields = http_build_query($data);
@@ -115,5 +140,84 @@ class Utils
         $result = curl_exec($ch);
         curl_close($ch);
         return $result;
+    }
+
+    /**
+     * 生成签名
+     * @return 签名，本函数不覆盖sign成员变量，如要设置签名需要调用SetSign方法赋值
+     */
+    public static function sign($data, $key)
+    {
+        //签名步骤一：按字典序排序参数
+        ksort($data);
+        $string = self::toUrlParams($data);
+        //签名步骤二：在string后加入KEY
+        $string = $string . "&key=" . $key;
+        //签名步骤三：MD5加密
+        $string = md5($string);
+        //签名步骤四：所有字符转为大写
+        $result = strtoupper($string);
+        return $result;
+    }
+
+    /**
+     * [getIp desc]
+     * @desc
+     * @author limx
+     * @return string
+     */
+    public static function getIp()
+    {
+        if (getenv("HTTP_CLIENT_IP"))
+            $ip = getenv("HTTP_CLIENT_IP");
+        else if (getenv("HTTP_X_FORWARDED_FOR"))
+            $ip = getenv("HTTP_X_FORWARDED_FOR");
+        else if (getenv("REMOTE_ADDR"))
+            $ip = getenv("REMOTE_ADDR");
+        else $ip = "Unknow";
+        return $ip;
+
+    }
+
+    public static function toUrlParams($data)
+    {
+        $buff = "";
+        foreach ($data as $k => $v) {
+            if ($k != "sign" && $v != "" && !is_array($v)) {
+                $buff .= $k . "=" . $v . "&";
+            }
+        }
+
+        $buff = trim($buff, "&");
+        return $buff;
+    }
+
+    public static function xml($data)
+    {
+        if (!is_array($data) || count($data) <= 0) {
+            return false;
+        }
+
+        $xml = "<xml>";
+        foreach ($data as $key => $val) {
+            if (is_numeric($val)) {
+                $xml .= "<" . $key . ">" . $val . "</" . $key . ">";
+            } else {
+                $xml .= "<" . $key . "><![CDATA[" . $val . "]]></" . $key . ">";
+            }
+        }
+        $xml .= "</xml>";
+        return $xml;
+    }
+
+    public static function xmlToArray($xml)
+    {
+        if (!$xml) {
+            return false;
+        }
+        //将XML转为array
+        //禁止引用外部xml实体
+        libxml_disable_entity_loader(true);
+        return json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
     }
 }

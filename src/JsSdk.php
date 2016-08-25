@@ -36,7 +36,7 @@ class JsSdk
         return $signPackage;
     }
 
-    private function getJsApiTicket($file = 'cache/jsapi_ticket.php')
+    protected function getJsApiTicket($file = 'cache/jsapi_ticket.php')
     {
         // access_token 应该全局存储与更新，以下代码以写入到文件中做示例
         if (!file_exists($file)) {

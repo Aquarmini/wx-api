@@ -6,24 +6,16 @@
 // +----------------------------------------------------------------------
 // | Author: limx <715557344@qq.com> <http://www.lmx0536.cn>
 // +----------------------------------------------------------------------
-// | Date: 2016/8/25 Time: 16:35
+// | Date: 2016/8/25 Time: 17:01
 // +----------------------------------------------------------------------
 namespace limx\tools\wx;
 
-use limx\tools\wx\JsSdk;
+use Exception;
 
-class TempMsg extends JsSdk
+class WxPayException extends Exception
 {
-    public function send($openid, $tem_id, $url, $ddata)
+    public function errorMessage()
     {
-        $acc_token = $this->getAccessToken($this->token_path);
-        $data['touser'] = $openid;
-        $data['template_id'] = $tem_id;
-        $data['url'] = $url;
-        $data['data'] = $ddata;
-        $url = 'https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=' . $acc_token;
-        $res = Utils::httpPost($url, $data, 'json');
-        $res = json_decode($res, true);
-        return $res;
+        return $this->getMessage();
     }
 }
