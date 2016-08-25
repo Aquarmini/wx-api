@@ -8,10 +8,10 @@
 // +----------------------------------------------------------------------
 // | Date: 2016/8/25 Time: 12:08
 // +----------------------------------------------------------------------
-namespace limx\tools\wx;
+namespace limx\tools\wx\pay;
 
 use limx\tools\wx\Utils;
-use limx\tools\wx\WxPayException;
+use limx\tools\wx\pay\WxPayException;
 
 class RedPack
 {
@@ -60,6 +60,6 @@ class RedPack
         $res = Utils::httpPost($url, $xml, 'data', NULL, $cert);
         return Utils::xmlToArray($res);
     }
-    
+
 
 }
