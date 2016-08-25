@@ -55,6 +55,13 @@ class Utils
         return unserialize(trim(file_get_contents($filename)));
     }
 
+    /**
+     * [httpGet desc]
+     * @desc
+     * @author limx
+     * @param $url
+     * @return mixed
+     */
     public static function httpGet($url)
     {
         $curl = curl_init();
@@ -77,5 +84,39 @@ class Utils
         curl_close($curl);
 
         return $res;
+    }
+
+    public function httpPost($url, $data, $type = 'url', $header, $ssl = false)
+    {
+
+
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        switch ($type) {
+            case 'url':
+                $postFields = http_build_query($data);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+                break;
+            case 'json':
+                $postFields = json_encode($data);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                        'Content-Type: application/json',
+                        'Content-Length: ' . strlen($postFields))
+                );
+                break;
+            case 'xml':
+                break;
+            default:
+                $postFields = http_build_query($data);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+                break;
+        }
+
+        $result = curl_exec($ch);
+        curl_close($ch);
+        return $result;
     }
 }
