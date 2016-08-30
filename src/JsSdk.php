@@ -7,8 +7,8 @@ class JsSdk
 {
     protected $appId;
     protected $appSecret;
-    public $ticket_path = '';
-    public $token_path = '';
+    protected $ticketPath = '';
+    protected $tokenPath = '';
 
     public function __construct($appId, $appSecret)
     {
@@ -16,9 +16,19 @@ class JsSdk
         $this->appSecret = $appSecret;
     }
 
+    public function setTokenPath($path)
+    {
+        $this->tokenPath = $path;
+    }
+
+    public function setTicketPath($path)
+    {
+        $this->ticketPath = $path;
+    }
+
     public function getSignPackage()
     {
-        $jsapiTicket = $this->getJsApiTicket($this->ticket_path);
+        $jsapiTicket = $this->getJsApiTicket($this->ticketPath);
 
         // 注意 URL 一定要动态获取，不能 hardcode.
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
@@ -48,7 +58,7 @@ class JsSdk
         // jsapi_ticket 应该全局存储与更新，以下代码以写入到文件中做示例
         $data = Utils::getCache($file);
         if ($data['expire_time'] < time()) {
-            $accessToken = $this->getAccessToken($this->token_path);
+            $accessToken = $this->getAccessToken($this->tokenPath);
             // 如果是企业号用以下 URL 获取 ticket
             // $url = "https://qyapi.weixin.qq.com/cgi-bin/get_jsapi_ticket?access_token=$accessToken";
             $url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token=$accessToken";
