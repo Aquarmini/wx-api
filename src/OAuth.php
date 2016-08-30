@@ -16,7 +16,7 @@ class OAuth
 {
     public $code = "";
     public $state = "";
-    public $redirect_uri = "";
+    public $redirectUrl = "";
 
     protected $appId;
     protected $appSecret;
@@ -25,6 +25,11 @@ class OAuth
     {
         $this->appId = $appId;
         $this->appSecret = $appSecret;
+    }
+
+    public function setRedirectUrl($url)
+    {
+        $this->redirectUrl = urlencode($url);
     }
 
     /**
@@ -58,7 +63,7 @@ class OAuth
 
     private function getCode()
     {
-        $url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=$this->appId&redirect_uri=$this->redirect_uri&response_type=code&scope=snsapi_userinfo&state=$this->state#wechat_redirect";
+        $url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=$this->appId&redirect_uri=$this->redirectUrl&response_type=code&scope=snsapi_userinfo&state=$this->state#wechat_redirect";
         Header("Location: $url");
     }
 
