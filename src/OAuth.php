@@ -41,6 +41,10 @@ class OAuth
     {
         // 获取AccessToken
         $accessToken = $this->getOAuthAccessToken();
+        if (empty($accessToken) || empty($accessToken["access_token"]) || empty($accessToken["openid"])) {
+            // 获取基本信息失败
+            return false;
+        }
         //获取基本信息
         $url = "https://api.weixin.qq.com/sns/userinfo?access_token=" . $accessToken["access_token"] . "&openid=" . $accessToken["openid"] . "&lang=zh_CN";
 
