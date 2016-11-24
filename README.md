@@ -84,6 +84,7 @@
 ~~~
 
 # 微信JsApiPay支付
+ 在pay/lib/WxPayConfig中维护公众号信息。
 ~~~
 /** 微信支付 S */
 use limx\tools\wx\pay\JsApiPay;
