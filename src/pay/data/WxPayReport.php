@@ -11,6 +11,7 @@
 namespace limx\tools\wx\pay\data;
 
 use limx\tools\wx\pay\lib\WxPayDataBase;
+
 class WxPayReport extends WxPayDataBase
 {
     /**
